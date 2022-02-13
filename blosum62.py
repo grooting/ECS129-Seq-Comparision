@@ -12,16 +12,30 @@ import sys
 
 class Blosum62:
 
-    # preprocess the input and store appropiately (matrix)
-    def process(bl62_file, beta_par, seq1_file, seq2_file):  
-        bl62 = np.loadtxt(bl62_file, dtype=int)
-        beta = beta_par
-        seq1 = np.loadtxt(seq1_file)
-        seq2 = np.loadtxt(seq2.file)
+    # preprocess the BLOSUM 62 matrix
+    # first row: order of amino acid along the column
+    
+    def process_bl62(bl62_file):  
+        # open the file
+        bl62_parse = open(bl62_file)
+        next(bl62) # first line will just be the order of amino acids 
+
+        # first letter on following rows, defines amino acid for that row
+        # each letter contains a set of 20 scores  
+        bl62 = [list(entry.split()) for entry in bl62_parse]
         bl62.close()
+        
+    # sequence 1 and sequence 2
+    # https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python
+    def process_sequences(seq1_file, seq2_file):
+        with open(seq1_file) as s1:
+            seq1 = [list(line.rstrip()) for line in s1]
+
+        with open(seq2_file) as s2:
+            seq2 = [list(line.rstrip()) for line in s2]
+
         seq1.close()
         seq2.close()
-    # Ref: https://stackoverflow.com/questions/29629315/import-text-file-as-matrix-in-numpy
 
     # compute K1
         
