@@ -2,7 +2,7 @@
 # Emily Xiong, Betty Wu, and Wanting Zeng
 #
 # Option 4: A Metric for Protein Sequences
-#   Computing the similarity betweene two protein sequences
+#   Computing the similarity between two protein sequences
 #   reads in: matrix BL62, parameter β, and 2 sequences (S1 and S2)
 #   outputs the distance between two sequences
 
