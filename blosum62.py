@@ -1,5 +1,5 @@
 # ECS129 Project
-# Emily Xiong, Betty Wu, and Wanting Zeng 
+# Emily Xiong, Betty Wu, and Wanting Zeng
 #
 # Option 4: A Metric for Protein Sequences
 #   Computing the similarity betweene two protein sequences
@@ -8,44 +8,56 @@
 
 # Last Update: 2/12/22 11:22 PM
 
-import numpy as np  
+from cmath import sqrt
+import numpy as np
 import sys
 
-# global variables
-bl62 = {}
-seq1 = {}
-seq2 = {}
-beta = 0.0
+MAX_K = 10
 
 # computes K2 given parameter K1
+def compute_k2(u,v,k):
+    pass
 
 # computes K3 and distance given parameter K2
+def compute_k3(f, g):
+    sum = 0
+    min_len = min(len(f), len(g))
+    for k in range(1,MAX_K):
+        for i in range(min_len-k):
+            sum+=compute_k2(f[i:i+k], g[i:i+k],k)
+    return sum
 
+def normalized_k3(f,g):
+    return compute_k3(f,g)/sqrt(compute_k3(f,f)*compute_k3(g,g))
 
-# preprocess the BLOSUM 62 matrix and gets the K1 value 
+def compute_distance(f, g):
+    return sqrt(2*(1-normalized_k3(f, g)))
+
+# preprocess the BLOSUM 62 matrix and gets the K1 value
 # Ref: https://www.biostars.org/p/405990/
-def process_bl62(bl62_file, beta):  
+def compute_k1(bl62_file, beta):
     bl62_file = open(bl62_file, 'r')
     lines = bl62_file.readlines()
     bl62_file.close()
-    blosum62 = {} 
+    k1 = {}
 
     # first line: letters of the amino acids
-    aminoAcids = lines.pop(0)   
-    aminoAcids = aminoAcids.split()     
-    
+    aminoAcids = lines.pop(0)
+    aminoAcids = aminoAcids.split()
+
     # separate each amino acid
     for row in lines:   # first letter defines amino acid for the row
-        entries = row.split()   
-        amino = entries.pop(0)  
-        blosum62[amino] = {}
+        entries = row.split()
+        amino = entries.pop(0)
+        k1[amino] = {}
 
         # get score for each amino acid
         for col in aminoAcids:  # BL62(x,y)
-            entry = entries.pop(0)
-            blosum62[amino][col] = pow(float(entry), beta) # K1(x,y) = BL62(x,y)^β
+            bl62_entry = entries.pop(0)
+            k1[amino][col] = pow(
+                float(bl62_entry), beta)  # K1(x,y) = BL62(x,y)^β
 
-    return np.array(blosum62)   # return blosum62
+    return k1   # return blosum62
 
 # sequence 1 and sequence 2
 # https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python
@@ -57,34 +69,34 @@ def process_sequences(seq_file):
     lines = seq_file.readlines()
     seq_file.close()
     letters = ""
-    
+
     for i in range(0, len(lines)):
         lines[i] = lines[i].strip('\n')
         line = lines[i]
-        if line[i] == '>':  # skip 
+        if line[i] == '>':  # skip
             continue
         else:
             letters += line
     sequence = list(letters)
-    return sequence 
-    # return np.array(sequence)
-    # return [list(line.rstrip()) for line in seq if not line.startswith(">")]
-    
+    return sequence
+
+
 def main():
     # command line input
     # matrix BL62, parameter β, 2 sequences (s1, s2)
     if(len(sys.argv) != 5):
         sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')
-    
+
     beta = float(sys.argv[2])
-    bl62 = process_bl62(sys.argv[1], beta)
+    k1 = compute_k1(sys.argv[1], beta)
     seq1 = process_sequences(sys.argv[3])
     seq2 = process_sequences(sys.argv[4])
 
     # used for testing
     print("Sequence1: ", seq1, "\n")
     print("Sequence2: ", seq2, "\n")
-    print("Blosum62: ", bl62, "\n")
+    print("Blosum62: ", k1, "\n")
 
 # run the main program
-main()
+if __name__ == '__main__':
+    main()
