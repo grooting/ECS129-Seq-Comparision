@@ -6,24 +6,41 @@
 #   reads in: matrix BL62, parameter β, and 2 sequences (S1 and S2)
 #   outputs the distance between two sequences
 
-# Last Update: 2/12/22 11:22 PM
+# Last Update: 2/17/22 3:27PM
 
 from cmath import sqrt
 import numpy as np
 import sys
 
-MAX_K = 10
+MAX_K = 3
+k1 = {}
 
 # computes K2 given parameter K1
 def compute_k2(u,v,k):
-    pass
+    product = 1
+
+    for i in range(k):
+        #print("ui is ",u[i])
+        #print("vi is ", v[i])
+        #print("score is ", k1[u[i]][v[i]])
+        product*=k1[u[i]][v[i]]
+    return product
 
 # computes K3 and distance given parameter K2
 def compute_k3(f, g):
+    #print("f is ", f)
+    #print("g is ", g)
+
     sum = 0
     min_len = min(len(f), len(g))
-    for k in range(1,MAX_K):
-        for i in range(min_len-k):
+    # k is seq length
+    for k in range(1,MAX_K+1):
+        #print("k is ",k)
+        for i in range(min_len-k+1):
+            #print("i is ",i)
+            #print("f sub is ", f[i:i+k])
+            #print("g sub is ", g[i:i+k])
+            #print()
             sum+=compute_k2(f[i:i+k], g[i:i+k],k)
     return sum
 
@@ -35,11 +52,10 @@ def compute_distance(f, g):
 
 # preprocess the BLOSUM 62 matrix and gets the K1 value
 # Ref: https://www.biostars.org/p/405990/
-def compute_k1(bl62_file, beta):
+def process_bl62(bl62_file, beta):
     bl62_file = open(bl62_file, 'r')
     lines = bl62_file.readlines()
     bl62_file.close()
-    k1 = {}
 
     # first line: letters of the amino acids
     aminoAcids = lines.pop(0)
@@ -56,8 +72,7 @@ def compute_k1(bl62_file, beta):
             bl62_entry = entries.pop(0)
             k1[amino][col] = pow(
                 float(bl62_entry), beta)  # K1(x,y) = BL62(x,y)^β
-
-    return k1   # return blosum62
+    return k1
 
 # sequence 1 and sequence 2
 # https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python
@@ -87,15 +102,25 @@ def main():
     if(len(sys.argv) != 5):
         sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')
 
+    global k1
+    global MAX_K
+
     beta = float(sys.argv[2])
-    k1 = compute_k1(sys.argv[1], beta)
+    k1 = process_bl62(sys.argv[1], beta)
     seq1 = process_sequences(sys.argv[3])
     seq2 = process_sequences(sys.argv[4])
+    MAX_K = min(len(seq1), len(seq2))
+
+    distance = compute_distance(seq1, seq2)
+    #distance = compute_distance(seq1[:3], seq2[:3])
+
 
     # used for testing
-    print("Sequence1: ", seq1, "\n")
-    print("Sequence2: ", seq2, "\n")
-    print("Blosum62: ", k1, "\n")
+    #print("Sequence1: ", seq1, "\n")
+    #print("Sequence2: ", seq2, "\n")
+    #print("Blosum62: ", k1, "\n")
+    print("computed distance: ",distance)
+
 
 # run the main program
 if __name__ == '__main__':
