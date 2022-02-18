@@ -8,11 +8,10 @@
 
 # Last Update: 2/17/22 3:27PM
 
-from cmath import sqrt
-import numpy as np
+import math
 import sys
 
-MAX_K = 3
+MAX_K = 2
 k1 = {}
 
 # computes K2 given parameter K1
@@ -20,10 +19,13 @@ def compute_k2(u,v,k):
     product = 1
 
     for i in range(k):
+        #print("here")
         #print("ui is ",u[i])
         #print("vi is ", v[i])
         #print("score is ", k1[u[i]][v[i]])
         product*=k1[u[i]][v[i]]
+        #print(u[i], v[i], sep=" ")
+
     return product
 
 # computes K3 and distance given parameter K2
@@ -32,23 +34,26 @@ def compute_k3(f, g):
     #print("g is ", g)
 
     sum = 0
-    min_len = min(len(f), len(g))
     # k is seq length
     for k in range(1,MAX_K+1):
         #print("k is ",k)
-        for i in range(min_len-k+1):
-            #print("i is ",i)
-            #print("f sub is ", f[i:i+k])
-            #print("g sub is ", g[i:i+k])
-            #print()
-            sum+=compute_k2(f[i:i+k], g[i:i+k],k)
+        for i in range(len(f)-k+1):
+            for j in range(len(g)-k+1):
+                #print("i is ",i)
+                #print("f sub is ", f[i:i+k])
+                #print("g sub is ", g[j:j+k])
+                #print("k is ", k)
+                #print()
+                sum+=compute_k2(f[i:i+k], g[j:j+k],k)
+
     return sum
 
 def normalized_k3(f,g):
-    return compute_k3(f,g)/sqrt(compute_k3(f,f)*compute_k3(g,g))
+    #return compute_k3(f,g)
+    return compute_k3(f,g)/math.sqrt(compute_k3(f,f)*compute_k3(g,g))
 
 def compute_distance(f, g):
-    return sqrt(2*(1-normalized_k3(f, g)))
+    return math.sqrt(2*(1-normalized_k3(f, g)))
 
 # preprocess the BLOSUM 62 matrix and gets the K1 value
 # Ref: https://www.biostars.org/p/405990/
@@ -112,7 +117,7 @@ def main():
     MAX_K = min(len(seq1), len(seq2))
 
     distance = compute_distance(seq1, seq2)
-    #distance = compute_distance(seq1[:3], seq2[:3])
+    #distance = compute_distance(seq1[:2], seq2[:2])
 
 
     # used for testing
@@ -120,6 +125,7 @@ def main():
     #print("Sequence2: ", seq2, "\n")
     #print("Blosum62: ", k1, "\n")
     print("computed distance: ",distance)
+
 
 
 # run the main program
