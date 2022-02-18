@@ -6,48 +6,29 @@
 #   reads in: matrix BL62, parameter β, and 2 sequences (S1 and S2)
 #   outputs the distance between two sequences
 
-# Last Update: 2/17/22 3:27PM
-
 import math
 import sys
 
-MAX_K = 2
 k1 = {}
 
-# computes K2 given parameter K1
 def compute_k2(u,v,k):
     product = 1
-
     for i in range(k):
-        #print("here")
-        #print("ui is ",u[i])
-        #print("vi is ", v[i])
-        #print("score is ", k1[u[i]][v[i]])
         product*=k1[u[i]][v[i]] # dot product
     return product
 
-# computes K3 and distance given parameter K2
 def compute_k3(f, g):
-    #print("f is ", f)
-    #print("g is ", g)
-
     sum = 0
+    min_len = min(len(f), len(g))
     # k is seq length
-    for k in range(1,MAX_K+1):
-        #print("k is ",k)
+    for k in range(1,min_len+1):
         for i in range(len(f)-k+1):
             for j in range(len(g)-k+1):
-                #print("i is ",i)
-                #print("f sub is ", f[i:i+k])
-                #print("g sub is ", g[j:j+k])
-                #print("k is ", k)
-                #print()
                 sum+=compute_k2(f[i:i+k], g[j:j+k],k)
 
     return sum
 
 def normalized_k3(f,g):
-    #return compute_k3(f,g)
     return compute_k3(f,g)/math.sqrt(compute_k3(f,f)*compute_k3(g,g))
 
 def compute_distance(f, g):
@@ -106,17 +87,13 @@ def main():
         sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')
 
     global k1
-    global MAX_K
 
     beta = float(sys.argv[2])
     k1 = process_bl62(sys.argv[1], beta)
     seq1 = process_sequences(sys.argv[3])
     seq2 = process_sequences(sys.argv[4])
-    MAX_K = min(len(seq1), len(seq2))
 
     distance = compute_distance(seq1, seq2)
-    #distance = compute_distance(seq1[:2], seq2[:2])
-
 
     # used for testing
     #print("Sequence1: ", seq1, "\n")
