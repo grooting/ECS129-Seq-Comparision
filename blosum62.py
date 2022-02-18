@@ -23,7 +23,7 @@ def compute_k2(u,v,k):
         #print("ui is ",u[i])
         #print("vi is ", v[i])
         #print("score is ", k1[u[i]][v[i]])
-        product*=k1[u[i]][v[i]]
+        product*=k1[u[i]][v[i]] # dot product
     return product
 
 # computes K3 and distance given parameter K2
