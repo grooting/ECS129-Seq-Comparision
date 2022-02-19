@@ -1,0 +1,46 @@
+# fasta36 -s BL62 -f 0 -g 0 ../ECS129-Seq-Comparision/seq2.fa ../ECS129-Seq-Comparision/seq3.fa
+FASTA searches a protein or DNA sequence data bank
+ version 36.3.8h Aug, 2019
+Please cite:
+ W.R. Pearson & D.J. Lipman PNAS (1988) 85:2444-2448
+
+Query: ../ECS129-Seq-Comparision/seq2.fa
+  1>>>1oelG2.pdb G  94   0.000 - 94 aa
+Library: ../ECS129-Seq-Comparision/seq3.fa
+       68 residues in     1 sequences
+
+Statistics: (shuffled [499]) MLE statistics: Lambda= 0.0216;  K=0.001541
+ statistics sampled from 1 (1) to 499 sequences
+Algorithm: FASTA (3.8 Nov 2011) [optimized]
+Parameters: BL62 matrix (11:-4), open/ext: 0/0
+ ktup: 2, E-join: 1 (1), E-opt: 0.2 (1), width:  16
+ Scan time:  0.030
+
+The best scores are:                                      opt bits E(1)
+1ctf00.pdb -  68   0.000                           (  68)  123 13.3    0.48
+
+>>1ctf00.pdb -  68   0.000                                (68 aa)
+ initn:  56 init1:  32 opt: 123  Z-score: 48.8  bits: 13.3 E(1): 0.48
+Smith-Waterman score: 178; 30.6% identity (37.8% similar) in 111 aa overlap (5-93:3-66)
+
+                  10        20        30         40            50  
+1oelG2 VPCSDS---KAIAQVGTISANSDETVGKLIAEAMDKVGKEG-VITVED-G-TGL--QDE-
+           :    :: :  :   ::      : .:  .  . :   :      : :::  . : 
+1ctf00   EFD-VILKA-A--G---AN------K-VA--V--I-K--AV-----RGATGLALK-EA
+                     10                         20              30 
+
+                60           70              80         90      
+1oelG2 -LDVVE-AGGV-A-VIK-VGAATEVEM-K---E--KKARVEDALHATRA-AVE-EG 
+         :.:: :    :  .:  :    :   :   :  ::: .:.      : : : :  
+1ctf00 K-DLVESA---PAA-LKE-G----V--SKDDAEALKKA-LEE------AGA-EVEVK
+                  40                50         60               
+
+
+
+94 residues in 1 query   sequences
+68 residues in 1 library sequences
+ Tcomplib [36.3.8h Aug, 2019] (8 proc in memory [0G])
+ start: Fri Feb 18 23:34:07 2022 done: Fri Feb 18 23:34:07 2022
+ Total Scan time:  0.030 Total Display time:  0.000
+
+Function used was FASTA [36.3.8h Aug, 2019]

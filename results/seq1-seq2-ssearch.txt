@@ -1,0 +1,46 @@
+# ssearch36 -s BL62 ../ECS129-Seq-Comparision/seq1.fa ../ECS129-Seq-Comparision/seq2.fa
+SSEARCH performs a Smith-Waterman search
+ version 36.3.8h Aug, 2019
+Please cite:
+ T. F. Smith and M. S. Waterman, (1981) J. Mol. Biol. 147:195-197; 
+ W.R. Pearson (1991) Genomics 11:635-650
+
+Query: ../ECS129-Seq-Comparision/seq1.fa
+  1>>>1ctf00.pdb -  68   0.000 - 68 aa
+Library: ../ECS129-Seq-Comparision/seq2.fa
+       94 residues in     1 sequences
+
+Statistics: (shuffled [500]) MLE statistics: Lambda= 0.2033;  K=0.07243
+ statistics sampled from 1 (1) to 500 sequences
+Algorithm: Smith-Waterman (SSE2, Michael Farrar 2006) (7.2 Nov 2010)
+Parameters: BL62 matrix (11:-4), open/ext: -11/-1
+ Scan time:  0.000
+
+The best scores are:                                      s-w bits E(1)
+1oelG2.pdb G  94   0.000                           (  94)   49 18.2   0.022
+
+>>1oelG2.pdb G  94   0.000                                (94 aa)
+ s-w opt:  49  Z-score: 75.3  bits: 18.2 E(1): 0.022
+Smith-Waterman score: 49; 41.9% identity (67.4% similar) in 43 aa overlap (6-48:52-93)
+
+                                        10        20        30     
+1ctf00                          EFDVILKAAGANKVAVIKAVRGATGLGLKEAKDLV
+                                     : .. :. ::::: : .:: . .:: :  :
+1oelG2 TVGKLIAEAMDKVGKEGVITVEDGTGLQDELDVVEAGGVAVIK-VGAATEVEMKEKKARV
+              30        40        50        60         70        80
+
+          40        50        60        
+1ctf00 ESAPAALKEGVSKDDAEALKKALEEAGAEVEVK
+       :.:  : . .:..                    
+1oelG2 EDALHATRAAVEEG                   
+               90                       
+
+
+
+68 residues in 1 query   sequences
+94 residues in 1 library sequences
+ Tcomplib [36.3.8h Aug, 2019] (8 proc in memory [0G])
+ start: Fri Feb 18 23:34:35 2022 done: Fri Feb 18 23:34:35 2022
+ Total Scan time:  0.000 Total Display time:  0.010
+
+Function used was SSEARCH [36.3.8h Aug, 2019]

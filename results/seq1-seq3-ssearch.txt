@@ -1,0 +1,46 @@
+# ssearch36 -s BL62 ../ECS129-Seq-Comparision/seq1.fa ../ECS129-Seq-Comparision/seq3.fa
+SSEARCH performs a Smith-Waterman search
+ version 36.3.8h Aug, 2019
+Please cite:
+ T. F. Smith and M. S. Waterman, (1981) J. Mol. Biol. 147:195-197; 
+ W.R. Pearson (1991) Genomics 11:635-650
+
+Query: ../ECS129-Seq-Comparision/seq1.fa
+  1>>>1ctf00.pdb -  68   0.000 - 68 aa
+Library: ../ECS129-Seq-Comparision/seq3.fa
+       68 residues in     1 sequences
+
+Statistics: (shuffled [500]) MLE statistics: Lambda= 0.1998;  K=0.1516
+ statistics sampled from 1 (1) to 500 sequences
+Algorithm: Smith-Waterman (SSE2, Michael Farrar 2006) (7.2 Nov 2010)
+Parameters: BL62 matrix (11:-4), open/ext: -11/-1
+ Scan time:  0.000
+
+The best scores are:                                      s-w bits E(1)
+1ctf00.pdb -  68   0.000                           (  68)  314 93.2   4e-25
+
+>>1ctf00.pdb -  68   0.000                                (68 aa)
+ s-w opt: 314  Z-score: 483.6  bits: 93.2 E(1): 4e-25
+Smith-Waterman score: 314; 98.5% identity (100.0% similar) in 68 aa overlap (1-68:1-68)
+
+               10        20        30        40        50        60
+1ctf00 EFDVILKAAGANKVAVIKAVRGATGLGLKEAKDLVESAPAALKEGVSKDDAEALKKALEE
+       ::::::::::::::::::::::::::.:::::::::::::::::::::::::::::::::
+1ctf00 EFDVILKAAGANKVAVIKAVRGATGLALKEAKDLVESAPAALKEGVSKDDAEALKKALEE
+               10        20        30        40        50        60
+
+               
+1ctf00 AGAEVEVK
+       ::::::::
+1ctf00 AGAEVEVK
+               
+
+
+
+68 residues in 1 query   sequences
+68 residues in 1 library sequences
+ Tcomplib [36.3.8h Aug, 2019] (8 proc in memory [0G])
+ start: Fri Feb 18 23:34:41 2022 done: Fri Feb 18 23:34:41 2022
+ Total Scan time:  0.000 Total Display time:  0.000
+
+Function used was SSEARCH [36.3.8h Aug, 2019]
