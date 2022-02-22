@@ -22,22 +22,48 @@ A kernel K is a symmetric function from $X x X$ to $\mathbb{R}$, where $X$ is a 
 
 \textbf{Reading in the Arguments}
 The blosum62.py program takes in four command line inputs from the user. To get the sequences from a ‘.fa’ file, we need to consider the scenario where there are notes before the sequence itself, thus we want to skip any lines that are not the actual sequence. Additionally, we want to combine the amino acids into one continuous sequence per file. This way, we can generate two respective sequences. 
-A blosum matrix is presented in as a file where the first line consists of the order of the letters of amino acids along the column and the first letter on preceding rows contains the amino acid for that row. We want to properly associate all the scores corresponding to the amino acids in order to process a Blosum 62 matrix. A BLOSUM62 is a similarity matrix on $A$. When forming a BLOSUM62 matrix, a kernel $Q \colon A x A \to \mathbb{R}$ is defined from the aligned strings of amino acids that represent proteins. Additionally, we can compute kernel 1 when processing the matrix file. 
+A blosum matrix is presented in as a file where the first line consists of the order of the letters of amino acids along the column and the first letter on preceding rows contains the amino acid for that row. We want to properly associate all the scores corresponding to the amino acids in order to process a BLOSUM 62 matrix. A BLOSUM62 is a similarity matrix on $A$. When forming a BLOSUM62 matrix, a kernel $Q \colon A x A \to \mathbb{R}$ is defined from the aligned strings of amino acids that represent proteins. Additionally, we can compute kernel 1 when processing the matrix file. 
 
-\textbf{Kernel 1}
+\textbf{Kernel 1: amino acid pairs}
+The program takes in a BLOSUM 62 matrix, thus, BL62 is a symmetric, positive, and definite matrix. 
 We define a kernel: $K^1 \colon A x A \to \mathbb{R}$. Where $K^1(x, y) = BL62(x, y)^β$, where $\beta$ is a parameter as given by the user. To compute $K^1$, we simply use a power function to put the original entry of the Blosum 62 matrix to the power of $\beta$. 
 
-\textbf{Kernel 2}
-Kernel 2 is a kernel on the set of all k-mers. Kernel 2 takes two subsequences (k-mers) u and v of length k and performs the dot product on the subsequences u and v.
+\textbf{Kernel 2: comparing two strings of the same length}
+Kernel 2 is a kernel on the set of all k-mers. Note that $A^k$ is the $k-th$ Cartesian power of $A$, where $k$ is a strictly positive integer. We define a k-mer as an element of $A^k$. 
+Kernel 2,  that is $K^2_k (u, v)$, takes two subsequences (k-mers) u and v of length k and performs the dot product on the subsequences u and v.
+\begin{center}
+\begin{align*} 
+u^k &=  (u_1, u_2, \cdot, u_k) \\ 
+v^k &=  (v_1, v_2, \cdot, v_k)
+\end{align*}
+\end{center}
 
-\textbf{Kernel 3}
-Kernel 3 takes the minimum length between f and g and
+\textbf{Kernel 3: computing sequence similarity}
+Let $f = (f_1, f_2,...,f_m)$ and $g = (f_1, f_2,...,f_n)$ each represent amino acid sequence, and $|f|$ and  $|g|$ represent their respective lengths. Both are strings where, $f \in A^m$ and $g \in A^n$. Note that gaps are not considered, thus we can restrict the kernel to have two contiguous substrings of length k, $u^k$ of $f$ and $v^k$ from $g$. Note that there are $m - k+1$ and $n-k+1$ substrings of each f and g respectively. \\
+We define kernel 3, $K^3$, as follows: 
+\begin{center}
+\begin{align*} 
+K^3(f,g) &= \sum_{u^k \in f}\sum_{v^k \in g} K^2_k(u^k,v^k) \\
+K_3(f,g) &= \sum_{k=1}^p K_3^k(f,g)
+\end{align*}
+\end{center}
+we note $p$ as the minimum length between the two sequences compared, that is $p = min(m,n)$. Also, we notice that this is a simple, naive algorithm for computing the kernel as all k-mers of f and g are generated and evaluated, causing a high computing cost of $O(mnk^2_{max}$. Thus, we have a sped up algorithm that will be discussed later. 
 
-\textbf{Normalized Kernel 3}
-Defines a dot product on the space of sequences in order to compute a correlation kernel Khat normalized from K3. 
+\textbf{Kernel $\hat{K^3}$: a correlation kernel}
+Defines a dot product on the space of sequences in order to compute a correlation kernel, $\hat{K^3}$ that is normalized from $K^3$. 
+\begin{center}
+\begin{align*} 
+\hat{K^3}(f,g) = \frac{K_3(f,g)}{\sqrt{K_3(f,f)K_3(g,g)}}
+\end{align*}
+\end{center}
 
 \textbf{Distance}
-
+The corresponding distance to $\hat{K^3}$ can be found using the following formula:
+\begin{center}
+\begin{align*} 
+    d_{K}(f,g) = \sqrt{2(1-\hat{K^3}(f,g))}
+    \end{align*}
+\end{center}
 
 \section{Results}
 String Kernel Result from three sequences:
