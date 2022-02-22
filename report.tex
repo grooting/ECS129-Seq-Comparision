@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+
+\title{ECS129 Project: Sequence Analysis}
+\author{Betty Wu, Emily Xiong, and Wanting Zeng  }
+\date{March 2 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Methods}
+
+\paragraph{}
+The string kernel considered here is inspired by Smale’s new method for comparing protein sequences. We have created a program that computes a metric for the similarity between two protein sequences, we allow users of the program to input several arguments: a matrix BL62, a $\beta$ parameter, and two sequences to compare. Note that gaps are not considered as this program does not generate an alignment between two sequences. This method uses kernels to define an actual metric on the space of a protein sequence. 
+
+\textbf{Notations}
+A kernel K is a symmetric function from $X x X$ to $\mathbb{R}$, where $X$ is a finite set of size $n$. Given an order on $X$, K is represented as a matrix, $X$ is the set of indices of the matrix elements. We can assume that K is symmetric, positive, and definite. Let $A$ be the set of the standard twenty amino acids that are found in proteins. A protein sequence $S$ is a string of elements formed from $A$.
+
+\textbf{Reading in the Arguments}
+The blosum62.py program takes in four command line inputs from the user. To get the sequences from a ‘.fa’ file, we need to consider the scenario where there are notes before the sequence itself, thus we want to skip any lines that are not the actual sequence. Additionally, we want to combine the amino acids into one continuous sequence per file. This way, we can generate two respective sequences. 
+A blosum matrix is presented in as a file where the first line consists of the order of the letters of amino acids along the column and the first letter on preceding rows contains the amino acid for that row. We want to properly associate all the scores corresponding to the amino acids in order to process a Blosum 62 matrix. A BLOSUM62 is a similarity matrix on $A$. When forming a BLOSUM62 matrix, a kernel $Q \colon A x A \to \mathbb{R}$ is defined from the aligned strings of amino acids that represent proteins. Additionally, we can compute kernel 1 when processing the matrix file. 
+
+\textbf{Kernel 1}
+We define a kernel: $K^1 \colon A x A \to \mathbb{R}$. Where $K^1(x, y) = BL62(x, y)^β$, where $\beta$ is a parameter as given by the user. To compute $K^1$, we simply use a power function to put the original entry of the Blosum 62 matrix to the power of $\beta$. 
+
+\textbf{Kernel 2}
+Kernel 2 is a kernel on the set of all k-mers. Kernel 2 takes two subsequences (k-mers) u and v of length k and performs the dot product on the subsequences u and v.
+
+\textbf{Kernel 3}
+Kernel 3 takes the minimum length between f and g and
+
+\textbf{Normalized Kernel 3}
+Defines a dot product on the space of sequences in order to compute a correlation kernel Khat normalized from K3. 
+
+\textbf{Distance}
+
+
+\section{Results}
+String Kernel Result from three sequences:
+\begin{center}
+\begin{tabular}{ |c|} \hline
+Distance            \\ \hline
+d(Seq1,Seq3)=0.0245 \\ \hline
+d(Seq1,Seq2)=0.278  \\ \hline
+d(Seq2,Seq3)=0.2799 \\ \hline
+\end{tabular}
+\end{center}
+
+\par
+\textbf{Bio Analysis}
+Even though the string kernel method didn’t give us information about the alignment of two sequences, the score seems to be a good metric for similarity between two sequences.
+
+\textbf{Run-time Analysis}
+Computing K1 would take use $O(|A|^2)$ time and space. Suppose the first sequence is of length n and the second is of length m. The process of computing the score of two k-mers in K2 would take $O(k)$ time and space. 
+
+\section{Discussion}
+\begin{enumerate}
+    \item Speed up of algorithm
+    \item Comparison between speed-up and base alignment method
+    \item Vs FASTA(Smith-Waterman) vs SSEARCH (Smith-Waterman)
+\end{enumerate}
+GO BACK TO THIS
+Results in repo, not sure how to plot a table that’s as beautiful as in professor’s paper
+
+
+\section{Bibliography}
+https://www.fields.utoronto.ca/programs/scientific/11-12/discretegeom/CLS/Immunology_Amino_Acid_Chains.pdf
+
+\end{document}
