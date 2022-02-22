@@ -1,13 +1,15 @@
 # ECS129 Project
-# Emily Xiong, Betty Wu, and Wanting Zeng
+# Betty Wu, Emily Xiong, and Wanting Zeng
 #
 # Option 4: A Metric for Protein Sequences
 #   Computing the similarity between two protein sequences
 #   reads in: matrix BL62, parameter β, and 2 sequences (S1 and S2)
 #   outputs the distance between two sequences
 
+from ctypes import sizeof
 import math
 import sys
+import os.path 
 
 k1 = {}
 
@@ -35,8 +37,9 @@ def compute_distance(f, g):
     return math.sqrt(2*(1-normalized_k3(f, g)))
 
 # preprocess the BLOSUM 62 matrix and gets the K1 value
-# Ref: https://www.biostars.org/p/405990/
 def process_bl62(bl62_file, beta):
+    if os.path.exists(bl62_file) is False:
+         sys.exit("Error: BLOSUM 62 matrix file does not exist")
     bl62_file = open(bl62_file, 'r')
     lines = bl62_file.readlines()
     bl62_file.close()
@@ -59,11 +62,11 @@ def process_bl62(bl62_file, beta):
     return k1
 
 # sequence 1 and sequence 2
-# https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python
-# https://stackoverflow.com/questions/32953339/how-to-skip-line-with-matching-pattern-in-python?noredirect=1&lq=1
-# https://stackoverflow.com/questions/4978787/how-to-split-a-string-into-a-list-of-characters
-# https://www.w3schools.com/python/ref_func_range.asp
 def process_sequences(seq_file):
+    file_exists = os.path.exists(seq_file)
+    if os.path.exists(seq_file) is False:
+         sys.exit("Error: sequence file " + seq_file + " does not exist")
+
     seq_file = open(seq_file, 'r')
     lines = seq_file.readlines()
     seq_file.close()
@@ -84,24 +87,19 @@ def main():
     # command line input
     # matrix BL62, parameter β, 2 sequences (s1, s2)
     if(len(sys.argv) != 5):
-        sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')
-
+        sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')    
+    
     global k1
 
     beta = float(sys.argv[2])
+    if(beta < 0):
+        sys.exit('Error: beta must be positive') 
     k1 = process_bl62(sys.argv[1], beta)
     seq1 = process_sequences(sys.argv[3])
     seq2 = process_sequences(sys.argv[4])
 
     distance = compute_distance(seq1, seq2)
-
-    # used for testing
-    #print("Sequence1: ", seq1, "\n")
-    #print("Sequence2: ", seq2, "\n")
-    #print("Blosum62: ", k1, "\n")
     print("computed distance: ",distance)
-
-
 
 # run the main program
 if __name__ == '__main__':
