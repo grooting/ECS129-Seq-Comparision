@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb}
+\usepackage{hyperref}
 
 \title{ECS129 Project: Sequence Analysis}
 \author{Betty Wu, Emily Xiong, and Wanting Zeng  }
@@ -12,24 +13,31 @@
 
 \section{Introduction}
 
-\section{Methods}
-
 \paragraph{}
-The string kernel considered here is inspired by Smale’s new method for comparing protein sequences. We have created a program that computes a metric for the similarity between two protein sequences, we allow users of the program to input several arguments: a matrix BL62, a $\beta$ parameter, and two sequences to compare. Note that gaps are not considered as this program does not generate an alignment between two sequences. This method uses kernels to define an actual metric on the space of a protein sequence. 
+In this project, we are going to determine a metric for the similarity between two protein sequences based on a new method introduced by Smale and colleagues. The amino acid sequence of a protein is the blueprint from which its structure and ultimately function can be derived. Thus, sequence comparison methods remain critical for the determination of similarity between proteins. Protein sequence alignment programs provide multiple scores, from a raw score obtained with the dynamic programming method used to align the two string of letters (amino acids) representing the sequences based on a given substitution matrix (BLOSUM62 for this project), to an E-value to measure the statistical significance of the alignment. However, none of these scores actually measure the distance of protein sequences. It was never confirmed that they satisfy the triangular inequality. Additionally, they all depend on some parameters that are arbitrary. The primary problem is related to the possibility that there are gaps in the alignment. 
+\\\\
+A new method introduced by Smale and colleagues solve many of the problems mentioned above. This method does not generate an alignment between two sequences; hence, it does not need to consider gaps. It is based on the concept of kernels. A kernel on strings is defined using only the sequence of the amino acid chains and a good amino acid substitution matrix (e.g. BLOSUM62). This new method is proven to define an actual metric on the space of protein sequence.
 
+\section{Methods}
+\paragraph{}
+The string kernel considered here is inspired by Smale’s new method for comparing protein sequences [1]. We have created a program that computes a metric for the similarity between two protein sequences. We allow users of the program to input several arguments: a BL62 matrix, a $\beta$ parameter, and two sequences to compare. Note that gaps are not considered as this program does not generate an alignment between two sequences. This method uses kernels to define an actual metric on the space of a protein sequence. 
+\\\\
 \textbf{Notations}
-A kernel K is a symmetric function from $X x X$ to $\mathbb{R}$, where $X$ is a finite set of size $n$. Given an order on $X$, K is represented as a matrix, $X$ is the set of indices of the matrix elements. We can assume that K is symmetric, positive, and definite. Let $A$ be the set of the standard twenty amino acids that are found in proteins. A protein sequence $S$ is a string of elements formed from $A$.
 
+A kernel K is a symmetric function from $X \times X$ to $\mathbb{R}$, where $X$ is a finite set of size $n$. Given an order on $X$, K is represented as a matrix that is symmetric, positive, and definite. $X$ is the set of indices of the matrix elements. Let $A$ be the set of the standard twenty amino acids that are found in proteins. A protein sequence is a string of elements formed from $A$.
+\\\\
 \textbf{Reading in the Arguments}
+
 The blosum62.py program takes in four command line inputs from the user. To get the sequences from a ‘.fa’ file, we need to consider the scenario where there are notes before the sequence itself, thus we want to skip any lines that are not the actual sequence. Additionally, we want to combine the amino acids into one continuous sequence per file. This way, we can generate two respective sequences. 
-A blosum matrix is presented in as a file where the first line consists of the order of the letters of amino acids along the column and the first letter on preceding rows contains the amino acid for that row. We want to properly associate all the scores corresponding to the amino acids in order to process a BLOSUM 62 matrix. A BLOSUM62 is a similarity matrix on $A$. When forming a BLOSUM62 matrix, a kernel $Q \colon A x A \to \mathbb{R}$ is defined from the aligned strings of amino acids that represent proteins. Additionally, we can compute kernel 1 when processing the matrix file. 
+A BLOSUM matrix is presented in as a file where the first line consists of the order of the letters of amino acids along the column and the first letter on preceding rows contains the amino acid for that row. We want to properly associate all the scores corresponding to the amino acids in order to process a BLOSUM 62 matrix, that is a similarity matrix on $A$. When forming a BLOSUM 62 matrix, a kernel $K^1 \colon A \times A \to \mathbb{R}$ is defined from the aligned strings of amino acids that represent proteins that already takes in a marginal probability. Therefore, we can compute the first kernel when reading in the BLOSUM matrix. \\\\
+\textbf{Kernel 1: amino acid pairs} 
 
-\textbf{Kernel 1: amino acid pairs}
 The program takes in a BLOSUM 62 matrix, thus, BL62 is a symmetric, positive, and definite matrix. 
-We define a kernel: $K^1 \colon A x A \to \mathbb{R}$. Where $K^1(x, y) = BL62(x, y)^β$, where $\beta$ is a parameter as given by the user. To compute $K^1$, we simply use a power function to put the original entry of the Blosum 62 matrix to the power of $\beta$. 
-
+As defined above: $K^1 \colon A \times A \to \mathbb{R}$. Where $K^1(x, y) = BL62(x, y)^β$, where $\beta$ is a parameter as given by the user. To compute $K^1$, we simply use a power function to put the original entry of the BLOSUM 62 matrix to the power of $\beta$. 
+\\\\
 \textbf{Kernel 2: comparing two strings of the same length}
-Kernel 2 is a kernel on the set of all k-mers. Note that $A^k$ is the $k-th$ Cartesian power of $A$, where $k$ is a strictly positive integer. We define a k-mer as an element of $A^k$. 
+
+Kernel 2 is a kernel on the set of all k-mers. Note that $A^k$ is the k-th Cartesian power of $A$, where $k$ is a strictly positive integer. We define a k-mer as an element of $A^k$. 
 Kernel 2,  that is $K^2_k (u, v)$, takes two subsequences (k-mers) u and v of length k and performs the dot product on the subsequences u and v.
 \begin{center}
 \begin{align*} 
@@ -37,9 +45,10 @@ u^k &=  (u_1, u_2, \cdot, u_k) \\
 v^k &=  (v_1, v_2, \cdot, v_k)
 \end{align*}
 \end{center}
-
+\\\\
 \textbf{Kernel 3: computing sequence similarity}
-Let $f = (f_1, f_2,...,f_m)$ and $g = (f_1, f_2,...,f_n)$ each represent amino acid sequence, and $|f|$ and  $|g|$ represent their respective lengths. Both are strings where, $f \in A^m$ and $g \in A^n$. Note that gaps are not considered, thus we can restrict the kernel to have two contiguous substrings of length k, $u^k$ of $f$ and $v^k$ from $g$. Note that there are $m - k+1$ and $n-k+1$ substrings of each f and g respectively. \\
+
+Let $f = (f_1, f_2,...,f_m)$ and $g = (g_1, g_2,...,g_n)$ each represent an amino acid sequence, and $|f|$ and  $|g|$ represent their respective lengths. Both are strings where, $f \in A^m$ and $g \in A^n$. Note that gaps are not considered, thus we can restrict the kernel to have two contiguous substrings of length k, $u^k$ of $f$ and $v^k$ from $g$. Note that there are $m - k+1$ and $n-k+1$ substrings of each f and g respectively. \\
 We define kernel 3, $K^3$, as follows: 
 \begin{center}
 \begin{align*} 
@@ -47,17 +56,19 @@ K^3(f,g) &= \sum_{u^k \in f}\sum_{v^k \in g} K^2_k(u^k,v^k) \\
 K_3(f,g) &= \sum_{k=1}^p K_3^k(f,g)
 \end{align*}
 \end{center}
-we note $p$ as the minimum length between the two sequences compared, that is $p = min(m,n)$. Also, we notice that this is a simple, naive algorithm for computing the kernel as all k-mers of f and g are generated and evaluated, causing a high computing cost of $O(mnk^2_{max}$. Thus, we have a sped up algorithm that will be discussed later. 
-
+We note $p$ as the minimum length between the two sequences compared, that is $p = min(m,n)$. Also, we notice that this is a simple, naive algorithm for computing the kernel as all k-mers of f and g are generated and evaluated, causing a high computing cost of $O(mnk^2_{max})$. Thus, we have a sped up algorithm that will be discussed later in Discussions.
+\\\\
 \textbf{Kernel $\hat{K^3}$: a correlation kernel}
+
 Defines a dot product on the space of sequences in order to compute a correlation kernel, $\hat{K^3}$ that is normalized from $K^3$. 
 \begin{center}
 \begin{align*} 
 \hat{K^3}(f,g) = \frac{K_3(f,g)}{\sqrt{K_3(f,f)K_3(g,g)}}
 \end{align*}
 \end{center}
-
+\\\\
 \textbf{Distance}
+
 The corresponding distance to $\hat{K^3}$ can be found using the following formula:
 \begin{center}
 \begin{align*} 
@@ -66,6 +77,7 @@ The corresponding distance to $\hat{K^3}$ can be found using the following formu
 \end{center}
 
 \section{Results}
+\paragraph{}
 String Kernel Result from three sequences:
 \begin{center}
 \begin{tabular}{ |c|} \hline
@@ -75,34 +87,58 @@ d(Seq1,Seq2)=0.278  \\ \hline
 d(Seq2,Seq3)=0.2799 \\ \hline
 \end{tabular}
 \end{center}
-
-\par
+\\\\
 \textbf{Bio Analysis}
-Even though the string kernel method didn’t give us information about the alignment of two sequences, the score seems to be a good metric for similarity between two sequences.
 
+Even though the string kernel method didn’t give us information about the alignment of two sequences, the score seems to be a good metric for similarity between two sequences.
+\\\\
 \textbf{Run-time Analysis}
+
 Computing K1 would take use $O(|A|^2)$ time and space. Suppose the first sequence is of length n and the second is of length m. The process of computing the score of two k-mers in K2 would take $O(k)$ time and space. 
 
 \section{Discussion}
+The discussion will feature additions "beyond the prompt" as follows:
 \begin{enumerate}
     \item Speed up of algorithm
-    \item Comparison between speed-up and base alignment method
-    \item Vs FASTA(Smith-Waterman) vs SSEARCH (Smith-Waterman)
+    \item Comparison with standard alignment method
 \end{enumerate}
-GO BACK TO THIS
-Results in repo, not sure how to plot a table that’s as beautiful as in professor’s paper
+\subsection{Speed up of algorithm}
+The naive, brute-force way to compute the alignment free score between two protein sequences was discussed earlier in methods, however, there is a possible faster algorithm. blah blah
 
+\subsection{Comparison with a standard alignment}
+From an available program for sequence alignments [2], we used the ssearch36 program, to find the Needleman and Wunsch alignment, and the fasta36 program to find the Smith and Waterman alignment. The program uses a BLOSUM62-2 matrix for an alignment free method while ssearch and fasta use a BLOSUM62 matrix. The BLOSUM62-2 matrix is a normalized version of the raw score, as discussed in kernel 2. Additionally, since we did not consider gaps or gap penalties, we will focus on the results of no penalty alignments only. The results can be seen in the table. 
+\begin{center}
+\begin{tabular}{ |c|c|c|c|} \hline
+                    & (Seq1,Seq3)    &(Seq1,Seq2)  &(Seq2,Seq3) \\ \hline
+String Kernel       &0.0245         &0.278        &0.2799        \\ \hline
+FASTA No Penalty    &314,97.1       &183,39.1        &178; 30.6   \\ \hline
+SSearch No Penalty  &314,97.1       &183,39.1       &178; 30.6   \\ \hline
+\end{tabular}
+\end{center}
+As can be seen from the table, FASTA and SSearch produce the same results for each respective sequence. From the string kernel distances, we can see that the shortest distance is between sequence 1 and sequence 3, i.e. sequence 1 and sequence 3 are the most similar. The results from the FASTA and SSearch also show a 97.1\% similarity. The next  most similar sequence is between sequence 1 and sequence 2. The least similar is between sequence 2 and sequence 3 All three methods show this result. Thus, we can conclude that the various methods preserves the order of sequence similarity. 
 
-\section{Bibliography}
-https://www.fields.utoronto.ca/programs/scientific/11-12/discretegeom/CLS/Immunology_Amino_Acid_Chains.pdf
+\begin{thebibliography}{9}
+\bibitem{texbook}
+W.-J. Shen, H.-S. Wong, Q.-W. Xiao, X. Guo, and S. Smale (2012) \emph{Towards a Mathematical Foundation of
+Immunology and Amino Acid Chains}, City University of Hong Kong.
 
-Processing the sequence
-# https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python
-# https://stackoverflow.com/questions/32953339/how-to-skip-line-with-matching-pattern-in-python?noredirect=1&lq=1
-# https://stackoverflow.com/questions/4978787/how-to-split-a-string-into-a-list-of-characters
-# https://www.w3schools.com/python/ref_func_range.asp
+\bibitem{website}
+FASTA Downloads. UVA FASTA downloads. (n.d.). Retrieved February 23, 2022, from \url{https://fasta.bioch.virginia.edu/fasta_www2/fasta_down.shtml}
 
-Processing BLOSUM file
-# Ref: https://www.biostars.org/p/405990/
+\bibitem{website}
+S. Nojoomi and P. Koehl (2017) \emph{String kernels for protein sequence
+comparisons: improved fold recognition}
+
+\bibitem{website}Python Processing the sequence
+\\
+\url{https://stackoverflow.com/questions/18395587/splitting-characters-from-a-text-file-in-python} \\
+\url{https://stackoverflow.com/questions/32953339/how-to-skip-line-with-matching-pattern-in-python?noredirect=1&lq=1} \\
+\url{https://stackoverflow.com/questions/4978787/how-to-split-a-string-into-a-list-of-characters} \\
+\url{https://www.w3schools.com/python/ref_func_range.asp}
+
+\bibitem{website}
+Python Processing BLOSSUM file \\
+\url{https://www.biostars.org/p/405990/}
+\end{thebibliography}
+
 \end{document}
-
