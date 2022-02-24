@@ -5,26 +5,30 @@
 #   Computing the similarity between two protein sequences
 #   reads in: matrix BL62, parameter β, and 2 sequences (S1 and S2)
 #   outputs the distance between two sequences
+# 
+# Special Thanks to Professor Koehl for spotting bugs
 
 import math
 import sys
 
 k1 = {}
 
-def compute_k2(u,v,k):
-    product = 1
-    for i in range(k):
-        product*=k1[u[i]][v[i]] # dot product
-    return product
-
 def compute_k3(f, g):
     sum = 0
+    k2_memo={}
+
     min_len = min(len(f), len(g))
-    # k is seq length
     for k in range(1,min_len+1):
         for i in range(len(f)-k+1):
             for j in range(len(g)-k+1):
-                sum+=compute_k2(f[i:i+k], g[j:j+k],k)
+                u = f[i:i+k]
+                v = g[j:j+k]
+                last_k1 = k1[u[k-1]][v[k-1]]
+                if k == 1:
+                    k2_memo[(k,i,j)] = last_k1
+                else:
+                    k2_memo[(k,i,j)]=k2_memo[(k-1,i,j)]*last_k1
+                sum+= k2_memo[(k,i,j)]
 
     return sum
 
@@ -101,8 +105,23 @@ def main():
     #print("Blosum62: ", k1, "\n")
     print("computed distance: ",distance)
 
-
-
 # run the main program
 if __name__ == '__main__':
     main()
+
+def old_compute_k2(u,v,k):
+    product = 1
+    for i in range(k):
+        product*=k1[u[i]][v[i]] # dot product
+    return product
+
+def old_compute_k3(f, g):
+    sum = 0
+    min_len = min(len(f), len(g))
+    # k is seq length
+    for k in range(1,min_len+1):
+        for i in range(len(f)-k+1):
+            for j in range(len(g)-k+1):
+                sum+=old_compute_k2(f[i:i+k], g[j:j+k],k)
+
+    return sum
