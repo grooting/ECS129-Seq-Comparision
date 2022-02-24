@@ -1,0 +1,46 @@
+# fasta36 -s BL62 -f 0 -g 0 ../ECS129-Seq-Comparision/seq1.fa ../ECS129-Seq-Comparision/seq2.fa
+FASTA searches a protein or DNA sequence data bank
+ version 36.3.8h Aug, 2019
+Please cite:
+ W.R. Pearson & D.J. Lipman PNAS (1988) 85:2444-2448
+
+Query: ../ECS129-Seq-Comparision/seq1.fa
+  1>>>1ctf00.pdb -  68   0.000 - 68 aa
+Library: ../ECS129-Seq-Comparision/seq2.fa
+       94 residues in     1 sequences
+
+Statistics: (shuffled [499]) MLE statistics: Lambda= 0.0207;  K=0.001333
+ statistics sampled from 1 (1) to 499 sequences
+Algorithm: FASTA (3.8 Nov 2011) [optimized]
+Parameters: BL62 matrix (11:-4), open/ext: 0/0
+ ktup: 2, E-join: 1 (1), E-opt: 0.2 (1), width:  16
+ Scan time:  0.010
+
+The best scores are:                                      opt bits E(1)
+1oelG2.pdb G  94   0.000                           (  94)  164 14.5    0.24
+
+>>1oelG2.pdb G  94   0.000                                (94 aa)
+ initn:  66 init1:  35 opt: 164  Z-score: 55.7  bits: 14.5 E(1): 0.24
+Smith-Waterman score: 183; 31.8% identity (39.1% similar) in 110 aa overlap (3-66:5-93)
+
+                     10                     20                 30  
+1ctf00   EFDVIL-KA-A--G---AN------K-VA--V-IKAV-R-G--AT---GL-GLK-E-A
+           :    :: :  :   ::      : .:  .  : : . :   :   :  ::. :  
+1oelG2 VPCSD---SKAIAQVGTISANSDETVGKLIAEAMD-K-VGKEGVI-TVEDG-TGLQDEL-
+                  10        20        30          40          50   
+
+                 40                50         60               
+1ctf00 KDLVESA---PA-ALKE-G----V--SKDDAEALKKA-LEEAG--A-----EVEVK
+        :.:: :    :  .:  :    :   :   :  ::: .:.:   :     : :  
+1oelG2 -DVVE-AGGV-AV-IK-VGAATEVEM-K---E--KKARVEDA-LHATRAAVE-EG 
+               60           70              80         90      
+
+
+
+68 residues in 1 query   sequences
+94 residues in 1 library sequences
+ Tcomplib [36.3.8h Aug, 2019] (8 proc in memory [0G])
+ start: Fri Feb 18 23:33:33 2022 done: Fri Feb 18 23:33:33 2022
+ Total Scan time:  0.010 Total Display time:  0.010
+
+Function used was FASTA [36.3.8h Aug, 2019]
