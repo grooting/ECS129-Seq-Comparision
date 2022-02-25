@@ -12,7 +12,9 @@ import math
 import sys
 import os.path 
 
+# global variables for sharing between functions
 k1 = {}
+aminoAcids = []
 
 def speedup_compute_k3(f, g):
     sum = 0
@@ -34,7 +36,9 @@ def speedup_compute_k3(f, g):
     return sum
 
 def normalized_k3(f,g):
-    return speedup_compute_k3(f,g)/math.sqrt(speedup_compute_k3(f,f)*speedup_compute_k3(g,g))
+    normalized = speedup_compute_k3(f,g)/math.sqrt(speedup_compute_k3(f,f)*speedup_compute_k3(g,g))
+    print("Normalized K3: ",normalized)
+    return normalized
 
 def compute_distance(f, g):
     return math.sqrt(2*(1-normalized_k3(f, g)))
@@ -48,6 +52,7 @@ def process_bl62(bl62_file, beta):
     bl62_file.close()
 
     # first line: letters of the amino acids
+    global aminoAcids
     aminoAcids = lines.pop(0)
     aminoAcids = aminoAcids.split()
 
@@ -65,13 +70,13 @@ def process_bl62(bl62_file, beta):
     return k1
 
 # sequence 1 and sequence 2
-def process_sequences(seq_file):
-    if os.path.exists(seq_file) is False:
-         sys.exit("Error: sequence file " + seq_file + " does not exist")
+def process_sequences(seq_filename):
+    if os.path.exists(seq_filename) is False:
+         sys.exit("Error: sequence file " + seq_filename + " does not exist")
 
-    seq_file = open(seq_file, 'r')
-    lines = seq_file.readlines()
-    seq_file.close()
+    seq_fd = open(seq_filename, 'r')
+    lines = seq_fd.readlines()
+    seq_fd.close()
     letters = ""
 
     for i in range(0, len(lines)):
@@ -81,7 +86,14 @@ def process_sequences(seq_file):
             continue
         else:
             letters += line
-    sequence = list(letters)
+    sequence = list(letters.upper())
+
+    # check if the sequence is valid
+    global aminoAcids
+    for amino in sequence:
+        if amino not in aminoAcids:
+            sys.exit(f"Error: sequence file {seq_filename} contains invalid amino acid {amino}")
+
     return sequence
 
 
@@ -101,7 +113,7 @@ def main():
     seq2 = process_sequences(sys.argv[4])
 
     distance = compute_distance(seq1, seq2)
-    print("computed distance: ",distance)
+    print("Distance between two sequences: ",distance)
 
 # run the main program
 if __name__ == '__main__':
