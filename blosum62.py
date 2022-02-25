@@ -15,7 +15,7 @@ import os.path
 
 k1 = {}
 
-def compute_k3(f, g):
+def speedup_compute_k3(f, g):
     sum = 0
     k2_memo={}
 
@@ -35,7 +35,7 @@ def compute_k3(f, g):
     return sum
 
 def normalized_k3(f,g):
-    return compute_k3(f,g)/math.sqrt(compute_k3(f,f)*compute_k3(g,g))
+    return speedup_compute_k3(f,g)/math.sqrt(speedup_compute_k3(f,f)*speedup_compute_k3(g,g))
 
 def compute_distance(f, g):
     return math.sqrt(2*(1-normalized_k3(f, g)))
@@ -67,7 +67,6 @@ def process_bl62(bl62_file, beta):
 
 # sequence 1 and sequence 2
 def process_sequences(seq_file):
-    file_exists = os.path.exists(seq_file)
     if os.path.exists(seq_file) is False:
          sys.exit("Error: sequence file " + seq_file + " does not exist")
 
@@ -109,19 +108,19 @@ def main():
 if __name__ == '__main__':
     main()
 
-def old_compute_k2(u,v,k):
+def compute_k2(u,v,k):
     product = 1
     for i in range(k):
-        product*=k1[u[i]][v[i]] # dot product
+        product*=k1[u[i]][v[i]]
     return product
 
-def old_compute_k3(f, g):
+def compute_k3(f, g):
     sum = 0
     min_len = min(len(f), len(g))
     # k is seq length
     for k in range(1,min_len+1):
         for i in range(len(f)-k+1):
             for j in range(len(g)-k+1):
-                sum+=old_compute_k2(f[i:i+k], g[j:j+k],k)
+                sum+=compute_k2(f[i:i+k], g[j:j+k],k)
 
     return sum
