@@ -8,7 +8,6 @@
 # 
 # Special Thanks to Professor Koehl for spotting bugs
 
-from ctypes import sizeof
 import math
 import sys
 import os.path 
