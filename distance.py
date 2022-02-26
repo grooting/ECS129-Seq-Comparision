@@ -11,7 +11,12 @@
 import math
 import sys
 import os.path
+import random
 from time import process_time
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import scipy.stats as stats
 
 # global variables for sharing between functions
 k1 = {}
@@ -39,7 +44,7 @@ def speedup_compute_k3(f, g):
 
 def normalized_k3(f,g):
     normalized = speedup_compute_k3(f,g)/math.sqrt(speedup_compute_k3(f,f)*speedup_compute_k3(g,g))
-    print("Normalized K3: ",normalized)
+    print(f"Normalized K3: {normalized:9.4f}")
     return normalized
 
 def compute_distance(f, g):
@@ -98,6 +103,21 @@ def process_sequences(seq_filename):
 
     return sequence
 
+def plot_shuffled_distr(k3hat, seq1, seq2, n):
+    print("Start shuffling!")
+    # our computed distance would be the first element
+    results = [k3hat]
+    for i in range(n):
+        print(f"{i} round")
+        shuffled_seq1 = random.sample(seq1, len(seq1))
+        shuffled_seq2 = random.sample(seq2, len(seq2))
+        shuffled_k3hat = normalized_k3(shuffled_seq1, shuffled_seq2)
+        results.append(shuffled_k3hat)
+    sns.kdeplot(results)
+    data = np.array(results)
+    zs = stats.zscore(data)
+    print(f"The normalized k3 {data[0]:9.4f} has z score {zs[0]:9.4f}")
+    plt.show()
 
 def main():
     # command line input
@@ -118,8 +138,9 @@ def main():
     distance = compute_distance(seq1, seq2)
     timer_end = process_time()
 
-    print("Distance between two sequences: ",distance)
-    print("Time elapsed: ",timer_end-timer_start)
+    print(f"Distance between two sequences: {distance:9.4f}")
+    print(f"Time elapsed: {timer_end-timer_start}")
+    plot_shuffled_distr(normalized_k3(seq1, seq2), seq1, seq2, 1000)
 
 # run the main program
 if __name__ == '__main__':
