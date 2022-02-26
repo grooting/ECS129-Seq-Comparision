@@ -22,6 +22,24 @@ import scipy.stats as stats
 k1 = {}
 aminoAcids = []
 
+# @compute_k2 and @compute_k3 are versions that didn't utilize memoization
+def compute_k2(u,v,k):
+    product = 1
+    for i in range(k):
+        product*=k1[u[i]][v[i]]
+    return product
+
+def compute_k3(f, g):
+    sum = 0
+    min_len = min(len(f), len(g))
+    # k is seq length
+    for k in range(1,min_len+1):
+        for i in range(len(f)-k+1):
+            for j in range(len(g)-k+1):
+                sum+=compute_k2(f[i:i+k], g[j:j+k],k)
+
+    return sum
+
 def speedup_compute_k3(f, g):
 
     sum = 0
@@ -44,7 +62,7 @@ def speedup_compute_k3(f, g):
 
 def normalized_k3(f,g):
     normalized = speedup_compute_k3(f,g)/math.sqrt(speedup_compute_k3(f,f)*speedup_compute_k3(g,g))
-    print(f"Normalized K3: {normalized:9.4f}")
+    print(f"Normalized K3: {normalized:.4f}")
     return normalized
 
 def compute_distance(f, g):
@@ -105,7 +123,7 @@ def process_sequences(seq_filename):
 
 def plot_shuffled_distr(k3hat, seq1, seq2, n):
     print("Start shuffling!")
-    # our computed distance would be the first element
+    # our computed k3hat would be the first element
     results = [k3hat]
     for i in range(n):
         print(f"{i} round")
@@ -116,12 +134,30 @@ def plot_shuffled_distr(k3hat, seq1, seq2, n):
     sns.kdeplot(results)
     data = np.array(results)
     zs = stats.zscore(data)
-    print(f"The normalized k3 {data[0]:9.4f} has z score {zs[0]:9.4f}")
+    print(f"The normalized k3 {data[0]:.4f} has z score {zs[0]:.4f}")
+    plt.show()
+
+def plot_runtime_for_fragments(seq1, seq2, step):
+    results=[]
+    max_fragment_size = min(len(seq1), len(seq2))
+    if step > max_fragment_size:
+        sys.exit(f"Error: step size {step} is too large. Try using different step size.")
+
+    possible_indices = list(np.arange(step,max_fragment_size))
+    end_indices = possible_indices[::step] # end index
+    if max_fragment_size-1 not in end_indices:
+        end_indices.append(max_fragment_size-1)
+    for i in end_indices:
+        timer_start = process_time()
+        compute_distance(seq1[:i], seq2[:i])
+        timer_end = process_time()
+        results.append(timer_end-timer_start)
+    sns.regplot(x=end_indices, y=results)
     plt.show()
 
 def main():
     # command line input
-    # matrix BL62, parameter β, 2 sequences (s1, s2)
+    # BL62, parameter β, 2 sequences (s1, s2)
     if(len(sys.argv) != 5):
         sys.exit('Usage:[matrix BL62][parameter β][sequence 1][sequence 2]')    
     
@@ -138,28 +174,13 @@ def main():
     distance = compute_distance(seq1, seq2)
     timer_end = process_time()
 
-    print(f"Distance between two sequences: {distance:9.4f}")
+    print(f"Distance between two sequences: {distance:.4f}")
     print(f"Time elapsed: {timer_end-timer_start}")
-    plot_shuffled_distr(normalized_k3(seq1, seq2), seq1, seq2, 1000)
+    # plot_shuffled_distr(normalized_k3(seq1, seq2), seq1, seq2, 1000)
+    # plot_runtime_for_fragments(seq1, seq2, 5)
 
 # run the main program
 if __name__ == '__main__':
     main()
 
-# @compute_k2 and @compute_k3 are versions that didn't utilize memoization
-def compute_k2(u,v,k):
-    product = 1
-    for i in range(k):
-        product*=k1[u[i]][v[i]]
-    return product
 
-def compute_k3(f, g):
-    sum = 0
-    min_len = min(len(f), len(g))
-    # k is seq length
-    for k in range(1,min_len+1):
-        for i in range(len(f)-k+1):
-            for j in range(len(g)-k+1):
-                sum+=compute_k2(f[i:i+k], g[j:j+k],k)
-
-    return sum
