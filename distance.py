@@ -10,13 +10,15 @@
 
 import math
 import sys
-import os.path 
+import os.path
+from time import process_time
 
 # global variables for sharing between functions
 k1 = {}
 aminoAcids = []
 
 def speedup_compute_k3(f, g):
+
     sum = 0
     k2_memo={}
 
@@ -112,13 +114,18 @@ def main():
     seq1 = process_sequences(sys.argv[3])
     seq2 = process_sequences(sys.argv[4])
 
+    timer_start = process_time()
     distance = compute_distance(seq1, seq2)
+    timer_end = process_time()
+
     print("Distance between two sequences: ",distance)
+    print("Time elapsed: ",timer_end-timer_start)
 
 # run the main program
 if __name__ == '__main__':
     main()
 
+# @compute_k2 and @compute_k3 are versions that didn't utilize memoization
 def compute_k2(u,v,k):
     product = 1
     for i in range(k):
