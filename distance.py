@@ -41,7 +41,6 @@ def compute_k3(f, g):
     return sum
 
 def speedup_compute_k3(f, g):
-
     sum = 0
     k2_memo={}
 
@@ -145,14 +144,14 @@ def plot_runtime_for_fragments(seq1, seq2, step):
 
     possible_indices = list(np.arange(step,max_fragment_size))
     end_indices = possible_indices[::step] # end index
-    if max_fragment_size-1 not in end_indices:
-        end_indices.append(max_fragment_size-1)
     for i in end_indices:
         timer_start = process_time()
         compute_distance(seq1[:i], seq2[:i])
         timer_end = process_time()
         results.append(timer_end-timer_start)
     sns.regplot(x=end_indices, y=results)
+    sns.regplot(x=end_indices, y=results, order=2)
+    sns.regplot(x=end_indices, y=results, order=3)
     plt.show()
 
 def main():
