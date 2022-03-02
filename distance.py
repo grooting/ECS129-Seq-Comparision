@@ -23,20 +23,22 @@ k1 = {}
 aminoAcids = []
 
 # @compute_k2 and @compute_k3 are versions that didn't utilize memoization
-# process k-mers
+# process two k-mers: u and v
 def compute_k2(u,v,k):
     product = 1
     for i in range(k):  # dot product
         product*=k1[u[i]][v[i]]
     return product
 
-# generate k-mers
+# generate all possible k-mers from two sequences f and g
 def compute_k3(f, g):
     sum = 0
     min_len = min(len(f), len(g))
     # k is seq length
     for k in range(1,min_len+1):
+        # i is the start index of subsequence in f
         for i in range(len(f)-k+1):
+            # j is the start index of subsequence in g
             for j in range(len(g)-k+1):
                 sum+=compute_k2(f[i:i+k], g[j:j+k],k)
 
@@ -45,11 +47,15 @@ def compute_k3(f, g):
 # uses memoization to reduce the runtime
 def speedup_compute_k3(f, g):
     sum = 0
+    # (k,i,j) tuple as key for this dictionary
     k2_memo={}
 
     min_len = min(len(f), len(g))
+    # k is seq length
     for k in range(1,min_len+1):
+        # i is the start index of subsequence in f
         for i in range(len(f)-k+1):
+            # j is the start index of subsequence in g
             for j in range(len(g)-k+1):
                 u = f[i:i+k]
                 v = g[j:j+k]
@@ -157,6 +163,7 @@ def plot_runtime_for_fragments(seq1, seq2, step):
         timer_end = process_time()
         results.append(timer_end-timer_start)
     sns.regplot(x=end_indices, y=results)
+    # degree 2
     sns.regplot(x=end_indices, y=results, order=2)
     sns.regplot(x=end_indices, y=results, order=3)
     plt.show()
