@@ -4,7 +4,7 @@
 # Option 4: A Metric for Protein Sequences
 #   Computing the similarity between two protein sequences
 #   input: matrix BL62, parameter β, and 2 sequences (S1 and S2)
-#   output: the distance between two sequences, the normalized kernel, and the runtime
+#   output: normalized k3, distance between two sequences, and runtime
 # 
 # Special Thanks to Professor Koehl for spotting bugs
 
